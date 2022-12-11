@@ -10,7 +10,7 @@ Game design and development has always interested me personally and with a backg
 
 # Development Environment
 
-Created in Unity ver. 2021.3.15f1. Scripts writting in JetBrains Rider.
+Created in Unity ver. 2021.3.15f1. Scripts written in JetBrains Rider.
 
 Written in C# using Unity libraries.
 
