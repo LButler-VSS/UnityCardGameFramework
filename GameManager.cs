@@ -1,134 +1,184 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
-
-public class Card : ScriptableObject
-{
-    public string test = "Hello world";
-}
+using UnityEngine.Serialization;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    // Declare Relevant Game Objects
+    // Declare Relevant Game Objects and Values
     public GameObject gManager;
-    public GameObject PlayerArea;
-    public GameObject DropZone;
-    public GameObject RuneAreaGiant;
-    public GameObject RuneAreaGod;
-    public GameObject RuneAreaLife;
-    public GameObject RuneAreaMan;
-    public GameObject Card01;
-    public GameObject Card02;
-    public GameObject Card03;
-    public GameObject Card04;
-    public GameObject LifeRune;
-    public GameObject GiantRune;
-    public GameObject GodRune;
-    public GameObject ManRune;
-    public GameObject Canvas;
+    [FormerlySerializedAs("PlayerArea")] public GameObject playerArea;
+    [FormerlySerializedAs("DropZone")] public GameObject dropZone;
+    [FormerlySerializedAs("RuneAreaGiant")] public GameObject runeAreaGiant;
+    [FormerlySerializedAs("RuneAreaGod")] public GameObject runeAreaGod;
+    [FormerlySerializedAs("RuneAreaLife")] public GameObject runeAreaLife;
+    [FormerlySerializedAs("RuneAreaMan")] public GameObject runeAreaMan;
+    [FormerlySerializedAs("Card01")] public GameObject card01;
+    [FormerlySerializedAs("Card02")] public GameObject card02;
+    [FormerlySerializedAs("Card03")] public GameObject card03;
+    [FormerlySerializedAs("Card04")] public GameObject card04;
+    [FormerlySerializedAs("LifeRune")] public GameObject lifeRune;
+    [FormerlySerializedAs("GiantRune")] public GameObject giantRune;
+    [FormerlySerializedAs("GodRune")] public GameObject godRune;
+    [FormerlySerializedAs("ManRune")] public GameObject manRune;
+    [FormerlySerializedAs("Canvas")] public GameObject canvas;
+    public GameObject mainCamera;
     public GameObject[] cardObjects;
     public GameObject[] cards;
+    
 
 
     // Declare relevant starting values
-    public int enemyHP = 1000;
-    public int playerHPCurrent = 75;
-    public int playerHPMax = 75;
-    public int manaPool = 0;
-    public int godRuneTotal = 0;
-    public int giantRuneTotal = 0;
-    public int lifeRuneTotal = 0;
-    public int manRuneTotal = 0;
+    [FormerlySerializedAs("enemyHP")] public int enemyHp;
+    [FormerlySerializedAs("playerHPCurrent")] public int playerHpCurrent;
+    [FormerlySerializedAs("playerHPMax")] public int playerHpMax;
+    public int manaPool;
+    public int godRuneTotal;
+    public int giantRuneTotal;
+    public int lifeRuneTotal;
+    public int manRuneTotal;
 
     // Declare relevant UI text objects
-    public TextMeshProUGUI EnemyHP;
-    public TextMeshProUGUI ManaPool;
-    public TextMeshProUGUI PlayerHP;
+    [FormerlySerializedAs("EnemyHP")] public TextMeshProUGUI tmpEnemyHp;
+    [FormerlySerializedAs("ManaPool")] public TextMeshProUGUI tmpManaPool;
+    [FormerlySerializedAs("PlayerHP")] public TextMeshProUGUI playerHp;
 
     // Generate an array for card dealing
 
     void Start() {
-        Canvas = gManager.GetComponent<DragDrop>().StartGrabCanvas();
+        enemyHp = PlayerPrefs.GetInt("EnemyHp");
+        playerHpCurrent = PlayerPrefs.GetInt("PlayerHpCur");
+        playerHpMax = PlayerPrefs.GetInt("PlayerHpMax");
+        manaPool = PlayerPrefs.GetInt("ManaPool");
+        godRuneTotal = PlayerPrefs.GetInt("GodRune");
+        giantRuneTotal = PlayerPrefs.GetInt("GiantRune");
+        lifeRuneTotal = PlayerPrefs.GetInt("LifeRune");
+        manRuneTotal = PlayerPrefs.GetInt("ManRune");
+
+        canvas = gManager.GetComponent<DragDrop>().StartGrabCanvas();
         // This section is temporary to provide cards to pull from the deck and draw an initial 5 cards as the game starts.
         cards = new GameObject[cardObjects.Length]; //makes sure they match length
-        for (int i = 0; i < cardObjects.Length; i++) {
-             cards[i] = Instantiate(cardObjects[i]) as GameObject;
+        for (int i = 0; i < cardObjects.Length; i++)
+        {
+            cards[i] = Instantiate(cardObjects[i]);
         }
         CmdDealCards(0);
-
+        
+        LoadRunes();
         // Set relevant values at the start of the game.
-        PlayerHP.text = playerHPCurrent + "/" + playerHPMax + " HP";
-        EnemyHP.text = "1000";
-        ManaPool.text = "0 Mana";
+        playerHp.text = playerHpCurrent + "/" + playerHpMax + " HP";
+        tmpEnemyHp.text = enemyHp.ToString();
+        tmpManaPool.text = manaPool + " Mana";
     }    
 
     public void CmdDealCards(int i) {
         // Deals Cards to hand. Currently deals up to 5 cards at a time when a hand is empty.
         while (i < 5) {
             GameObject card = Instantiate(cards[Random.Range(0, cards.Length)], new Vector2(0, 0), Quaternion.identity);
-            card.transform.SetParent(PlayerArea.transform, false);
+            card.transform.SetParent(playerArea.transform, false);
 
             i++;
         }
     }
 
-    public void Heal() {
+    private void UpdateSave()
+    {
+        PlayerPrefs.SetInt("EnemyHp", enemyHp);
+        PlayerPrefs.SetInt("PlayerHpCur", playerHpCurrent);
+        PlayerPrefs.SetInt("PlayerHpMax", playerHpMax);
+        PlayerPrefs.SetInt("ManaPool", manaPool);
+        PlayerPrefs.SetInt("GodRune", giantRuneTotal);
+        PlayerPrefs.SetInt("GiantRune", godRuneTotal);
+        PlayerPrefs.SetInt("LifeRune", lifeRuneTotal);
+        PlayerPrefs.SetInt("ManRune", manRuneTotal);
+    }
+
+    private void Heal() {
         // Update text on screen to reflect new player health total
-        if (playerHPCurrent <= playerHPMax) {
-            PlayerHP.text = playerHPCurrent.ToString() + "/" + playerHPMax.ToString() + " HP";
-            }
+        if (playerHpCurrent <= playerHpMax) {
+            playerHp.text = playerHpCurrent + "/" + playerHpMax + " HP";
+        }
         else {
-            playerHPCurrent = playerHPMax;
-            PlayerHP.text = playerHPCurrent.ToString() + "/" + playerHPMax.ToString() + " HP";
+            playerHpCurrent = playerHpMax;
+            playerHp.text = playerHpCurrent + "/" + playerHpMax + " HP";
+        }
+    }
+
+    private void Mana() {
+        // Update text on screen to reflect new player Mana Pool
+        tmpManaPool.text = manaPool + " Mana";
+    }
+
+    private void LoadRunes()
+    {
+        for (int i = 0; i < giantRuneTotal; i++)
+        {
+            GameObject runeGi = Instantiate(this.giantRune, new Vector2(0, 0), Quaternion.identity);
+            runeGi.transform.SetParent(runeAreaGiant.transform, false);
+        }
+
+        for (int i = 0; i < godRuneTotal; i++)
+        {
+            GameObject runeGo = Instantiate(this.godRune, new Vector2(0, 0), Quaternion.identity);
+            runeGo.transform.SetParent(runeAreaGod.transform, false);
+        }
+
+        for (int i = 0; i < lifeRuneTotal; i++)
+        {
+            GameObject runeLi = Instantiate(this.lifeRune, new Vector2(0, 0), Quaternion.identity);
+            runeLi.transform.SetParent(runeAreaLife.transform, false);
+        }
+
+        for (int i = 0; i < manRuneTotal; i++)
+        {
+            GameObject runeMa = Instantiate(this.manRune, new Vector2(0, 0), Quaternion.identity);
+            runeMa.transform.SetParent(runeAreaMan.transform, false);
         }
     }
     
-    public void Mana() {
-        // Update text on screen to reflect new player Mana Pool
-        ManaPool.text = manaPool.ToString() + " Mana";
-    }
-
-    public int PlayCard(string cardName) {
+    private int PlayCard(string cardName) {
         // When a card has been detected as played in Update(), it will send the name of the card to this function, 
-        // which will relay what the appropiate action for that card would be.
+        // which will relay what the appropriate action for that card would be.
         // CHANGE TO BOOL IF NO MULTI ENEMY FIGHTS ARE IMPLEMENTED
-        // OTHERWISE TARGETTING SYSTEM AND LOGIC WILL NEED TO BE ADDED
+        // OTHERWISE TARGETING SYSTEM AND LOGIC WILL NEED TO BE ADDED
         switch (cardName) {
             case "Card01(Clone)(Clone)":
-                if (RuneAreaGiant.transform.childCount < 8){
-                    GameObject giantRune = Instantiate(GiantRune, new Vector2(0, 0), Quaternion.identity);
-                    giantRune.transform.SetParent(RuneAreaGiant.transform, false);
+                if (giantRuneTotal < 8){
+                    GameObject runeGi = Instantiate(this.giantRune, new Vector2(0, 0), Quaternion.identity);
+                    runeGi.transform.SetParent(runeAreaGiant.transform, false);
+                    giantRuneTotal++;
                 }
-                enemyHP -= 5;
-                EnemyHP.text = enemyHP.ToString();
+                enemyHp -= 5;
+                tmpEnemyHp.text = enemyHp.ToString();
                 return 1;
             case "Card02(Clone)(Clone)":
-                GameObject godRune = Instantiate(GodRune, new Vector2(0, 0), Quaternion.identity);
-                if (RuneAreaGod.transform.childCount < 8) {
-                    godRune.transform.SetParent(RuneAreaGod.transform, false);
+                if (godRuneTotal < 8) {
+                    GameObject runeGo = Instantiate(this.godRune, new Vector2(0, 0), Quaternion.identity);
+                    runeGo.transform.SetParent(runeAreaGod.transform, false);
+                    godRuneTotal++;
                 }
                 manaPool += 3;
                 Mana();
                 return 2;
             case "Card03(Clone)(Clone)":
-                GameObject lifeRune = Instantiate(LifeRune, new Vector2(0, 0), Quaternion.identity);
-                if (RuneAreaLife.transform.childCount < 8) {
-                    lifeRune.transform.SetParent(RuneAreaLife.transform, false);
+                if (lifeRuneTotal < 8) {
+                    GameObject runeLi = Instantiate(this.lifeRune, new Vector2(0, 0), Quaternion.identity);
+                    runeLi.transform.SetParent(runeAreaLife.transform, false);
+                    lifeRuneTotal++;
                 }
-                playerHPCurrent += 5;
+                playerHpCurrent += 5;
                 Heal();
                 return 2;
             case "Card04(Clone)(Clone)":
-                GameObject manRune = Instantiate(ManRune, new Vector2(0, 0), Quaternion.identity);
-                if (RuneAreaMan.transform.childCount < 8) {
-                    manRune.transform.SetParent(RuneAreaMan.transform, false);
+                if (manRuneTotal < 8) {
+                    GameObject runeMa = Instantiate(this.manRune, new Vector2(0, 0), Quaternion.identity);
+                    runeMa.transform.SetParent(runeAreaMan.transform, false);
+                    manRuneTotal++;
                 }
-                enemyHP -= 2;
-                playerHPCurrent += 2;
+                enemyHp -= 2;
+                playerHpCurrent += 2;
                 manaPool += 1;
-                EnemyHP.text = enemyHP.ToString();
+                tmpEnemyHp.text = enemyHp.ToString();
                 Mana();
                 Heal();
                 return 1;
@@ -141,17 +191,23 @@ public class GameManager : MonoBehaviour
     void Update() {
         // Still thinking of a way to perform this outside of Update, but for now this is working.
         // Checks is the dropzone has a child, determines the card, implements the effect and destroys the card.
-        if (DropZone.transform.childCount > 0) {
-            var child = DropZone.transform.GetChild(0);
+        if (dropZone.transform.childCount > 0) {
+            var child = dropZone.transform.GetChild(0);
             var childName = child.name;
             //Debug.Log(childName);
-            var ValidCard = PlayCard(childName);
-            if (ValidCard != 0) {
-                GameObject.Destroy(DropZone.transform.GetChild(0).gameObject);
+            var validCard = PlayCard(childName);
+            if (validCard != 0) {
+                GameObject.Destroy(dropZone.transform.GetChild(0).gameObject);
             }
             else {
-                child.transform.SetParent(PlayerArea.transform, true);
+                child.transform.SetParent(playerArea.transform, true);
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            UpdateSave();
+            SceneManager.LoadScene(0);
         }
     }
 }

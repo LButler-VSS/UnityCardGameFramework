@@ -1,34 +1,34 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 
 public class CardZoom : MonoBehaviour
 {
-    public GameObject Canvas;
-    public GameObject ZoomCard;
+    [FormerlySerializedAs("Canvas")] public GameObject canvas;
+    [FormerlySerializedAs("ZoomCard")] public GameObject zoomCard;
 
-    private GameObject zoomCard;
-    private Sprite zoomSprite;
+    private GameObject m_ZoomCard;
+    private Sprite m_ZoomSprite;
     
     public void Awake() {
         
-        Canvas = GameObject.Find("Main Canvas");
-        zoomSprite = gameObject.GetComponent<Image>().sprite;
+        canvas = GameObject.Find("Main Canvas");
+        m_ZoomSprite = gameObject.GetComponent<Image>().sprite;
     }
 
     public void OnHoverEnter(){
-        /*
-        zoomCard = Instantiate(ZoomCard, new Vector2(Input.mousePosition.x, Input.mousePosition.y + 250), Quaternion.identity);
-        zoomCard.GetComponent<Image>().sprite = zoomSprite;
-        zoomCard.transform.SetParent(Canvas.transform, true);
-        RectTransform rect = zoomCard.GetComponent<RectTransform>();
+    
+        m_ZoomCard = Instantiate(zoomCard, new Vector2(Input.mousePosition.x, Input.mousePosition.y + 250), Quaternion.identity);
+        m_ZoomCard.GetComponent<Image>().sprite = m_ZoomSprite;
+        m_ZoomCard.transform.SetParent(canvas.transform, true);
+        RectTransform rect = m_ZoomCard.GetComponent<RectTransform>();
         rect.sizeDelta = new Vector2(240, 344); 
-        */
+        
     }
 
     public void OnHoverExit(){
-        Destroy(zoomCard);
+        // Also being called on drag, trying to avoid zoom objects sticking around.
+        Destroy(m_ZoomCard);
     }
 }

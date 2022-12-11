@@ -1,25 +1,23 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class DrawCards : MonoBehaviour
 {
-    public GameManager GameManager;
+    [FormerlySerializedAs("GameManager")] public GameManager gameManager;
     public int currentHandSize;
-    public GameObject PlayerArea;
+    [FormerlySerializedAs("PlayerArea")] public GameObject playerArea;
     public void OnClick()
     {
-        currentHandSize = PlayerArea.transform.childCount;
-        //Debug.Log(currentHandSize);
-        if (currentHandSize < 5){
-            GameManager.CmdDealCards(currentHandSize);
-        }
-        else if (currentHandSize < 10) {
-            GameManager.CmdDealCards(4);
-        }
-        else 
+        currentHandSize = playerArea.transform.childCount;
+        switch (currentHandSize)
         {
-            return;
+            //Debug.Log(currentHandSize);
+            case < 5:
+                gameManager.CmdDealCards(currentHandSize);
+                break;
+            case < 10:
+                gameManager.CmdDealCards(4);
+                break;
         }
     }
 
