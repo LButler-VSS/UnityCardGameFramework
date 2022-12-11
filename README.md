@@ -1,30 +1,32 @@
 # Overview
 
-{Important!  Do not say in this section that this is college assignment.  Talk about what you are trying to accomplish as a software engineer to further your learning.}
+This is the beginnings of a personal video game project. The game is to be a deckbuilding rogue-lite. This collection of scripts are my attempts to better learn and understand both general game development principles and Unity specific principles.
 
-{Provide a description the game that you wrote. Describe how to play your game.}
+The game in its current state is played by clicking on cards that are dealt to you at the bottom of the screen. Each card has a different affect. Press end turn to draw back to 5 cards, or one card if already at 5 or more.
 
-{Describe your purpose for writing this software.}
+Game design and development has always interested me personally and with a background in Computer Science and many hours spent playing video games, I wanted to try and see what I could make with my own talents.
 
-{Provide a link to your YouTube demonstration.  It should be a 4-5 minute demo of the game being played and a walkthrough of the code.}
-
-[Software Demo Video](http://youtube.link.goes.here)
+[Software Demo Video](https://youtu.be/hq_fUhR2qTA)
 
 # Development Environment
 
-{Describe the tools that you used to develop the software}
+Created in Unity ver. 2021.3.15f1. Scripts writting in JetBrains Rider.
 
-{Describe the programming language that you used and any libraries.}
+Written in C# using Unity libraries.
 
 # Useful Websites
 
-{Make a list of websites that you found helpful in this project}
-* [Web Site Name](http://url.link.goes.here)
-* [Web Site Name](http://url.link.goes.here)
+
+* [TutorialsPoint](https://www.tutorialspoint.com/unity/index.htm)
+* [YouTube - How to Create a 2D Card Game In Unity](https://www.youtube.com/watch?v=0-dUB52eEMk)
+* [Unity Documentation](https://unity.com/releases/editor/qa/lts-releases)
+* [Make a Good Looking Title Screen in Unity](https://hypedcloud.com/blog/make-a-good-looking-title-screen-in-unity)
 
 # Future Work
 
-{Make a list of things that you need to fix, improve, and add in the future.}
-* Item 1
-* Item 2
-* Item 3
+* Add the cards in hand to the save feature.
+* Make it possible for the player to win and lose.
+* Add content, i.e. more cards, enemies, encounter, story.
+* Add animation.
+* Add sound.
+* Create better save feature and/or a seed system.
